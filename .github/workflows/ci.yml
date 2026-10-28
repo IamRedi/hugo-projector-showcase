@@ -1,0 +1,28 @@
+name: Android build
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+      - name: Publication boundary and policy tests
+        run: |
+          python3 tools/check_public_export.py
+          python3 -m unittest discover -s tests -v
+      - name: SDK 34
+        run: sdkmanager 'platforms;android-34' 'build-tools;34.0.0'
+      - name: Build Android source
+        working-directory: android
+        run: ./gradlew --no-daemon :app:assembleDebug

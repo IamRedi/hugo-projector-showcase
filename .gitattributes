@@ -1,0 +1,9 @@
+* text=auto eol=lf
+# Preserve the exact bytes of the installed runtime source snapshot.
+android/app/src/** -text
+android/app/build.gradle -text
+android/build.gradle -text
+android/settings.gradle -text
+android/gradle.properties -text
+*.png -text
+*.jar -text

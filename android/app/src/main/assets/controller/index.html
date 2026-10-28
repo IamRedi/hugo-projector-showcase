@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <title>HUGO Projector</title>
+  <link rel="stylesheet" href="/style.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <header><div class="brand">HUGO <span>PROJECTOR</span></div><div id="connection" class="connection">Connecting</div></header>
+  <main>
+    <section id="pairPanel" class="card pair">
+      <div class="eyebrow">CONNECT</div><h1>Pair your phone</h1>
+      <p>Open <strong>Connect phone</strong> on the projector. Scan its QR code or enter the displayed six-digit code, then approve this phone on the projector.</p>
+      <label for="pairCode">Pair code</label><input id="pairCode" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+      <label for="phoneName">This device</label><input id="phoneName" maxlength="60" value="My phone">
+      <button id="pairButton" class="primary">Request pairing</button><div id="pairFeedback" class="feedback" aria-live="polite"></div>
+      <p class="hint">LOCAL LAB · Private Wi‑Fi only · HTTP traffic is not encrypted.</p>
+    </section>
+    <section id="workspace" hidden>
+      <nav><button data-tab="scenes" class="active">Skena</button><button data-tab="fx" id="fxNav">FX</button><button data-tab="canvas">Vizato</button><button data-tab="more">Më shumë</button></nav>
+      <section id="canvasTab" class="tab" hidden>
+        <div class="sectionTitle"><span id="editorRole" class="pill">Connecting</span><button id="focusCanvas">Expand</button><button id="hideTools">Hide tools</button></div>
+        <div class="canvasWrap"><canvas id="canvas" width="1280" height="720" aria-label="Projection canvas"></canvas></div>
+        <div id="drawingTools">
+        <div class="toolbar"><button id="penTool" class="active">Pen</button><button id="eraserTool">Eraser</button><button id="paletteToggle" aria-label="Color palette" aria-expanded="false">●</button><button id="undo" aria-label="Undo">↶</button><button id="redo" aria-label="Redo">↷</button><button id="clearCanvas">Clear Canvas</button><button id="moreTools">More</button></div>
+        <div id="palette" hidden><input id="drawColor" type="color" value="#75a5ff" aria-label="Custom color"><div id="swatches"></div></div>
+        <div id="extraTools" hidden><div class="toolbar"><button id="textTool">Move text</button><button id="maskTool">Mask points</button><label class="compact">Width <input id="drawWidth" type="range" min="2" max="50" value="8"></label><input id="canvasText" placeholder="Text on canvas"><button id="addText">Add text</button></div>
+        <details class="map"><summary>Mapping and animation</summary><p>Drag four frame corners while watching the wall. Use Mask points to tap a polygon; then apply it.</p><div class="mapControls"><button id="toggleGrid">Grid</button><button id="resetCorners">Reset corners</button><button id="applyMask">Apply mask</button><button id="clearMask">Clear mask</button></div><label>Effect <select id="effect"><option value="none">None</option><option value="draw">Line reveal</option><option value="pulse">Color pulse</option><option value="type">Text reveal</option></select></label><label>Speed <input id="speed" type="range" min="1" max="10" value="5"></label><label><input id="effectLoop" type="checkbox" checked> Loop</label><button id="applyEffect" hidden>Apply effect</button></details>
+        <div class="toolbar"><input id="canvasName" placeholder="Scene name"><button id="saveCanvas" class="primary">Save canvas</button></div>
+        </div></div>
+      </section>
+      <section id="scenesTab" class="tab">
+        <div class="pageHeading"><div><div class="eyebrow">FOTO / VIDEO</div><h1>Skena jote</h1></div><button id="toggleLibrary" class="quiet">Skenat e mia</button></div>
+        <div class="mediaComposer">
+          <input id="mediaFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" hidden>
+          <div class="uploadRow"><button id="mediaUpload" class="primary">＋ Ngarko foto / video</button><span id="mediaFileName">Zgjidh një skedar nga telefoni</span></div>
+          <div id="mediaStage" role="group" aria-label="Vendosja e medias në skenë"><div id="mediaEmpty">Ngarko një foto ose video<br><small>Pastaj lëvize dhe zmadhoje këtu.</small></div><div id="mediaRegion" hidden><div id="mediaPreview"></div><span id="mediaRegionLabel">Zona e medias</span><button id="mediaResize" aria-label="Ndrysho madhësinë">↘</button></div></div>
+          <p class="smallHint" id="mediaHint">Tërhiq figurën për ta lëvizur. Tërhiq këndin për ta zmadhuar. Shiko edhe projektimin real.</p>
+          <div class="mainActions"><button id="mediaPlay" class="primary">Shfaq</button><button id="mediaPause">Pauzë</button><button id="mediaStop">Stop</button><button id="mediaSaveToggle">Ruaj</button></div>
+          <div id="mediaSavePanel" class="savePanel" hidden><input id="mediaName" maxlength="80" placeholder="Emri i skenës"><button id="mediaSave">Ruaj skenën</button></div>
+          <details id="mediaPlacementTools" class="compactDetails"><summary>Vendosja e zonës</summary><div class="toolbar"><button id="mediaCenter">Në qendër</button><button id="mediaFull">Ekran i plotë</button><button id="mediaUndo">Kthe hapin</button></div><label>Madhësia <input id="mediaScale" type="range" min="5" max="100" value="70"></label><p class="smallHint">Raporti i fotos/videos ruhet. Një media në një zonë.</p></details>
+        </div>
+        <div id="sceneLibrary" hidden><div class="sectionTitle"><h2>Skenat e ruajtura</h2><button id="closeLibrary">Mbyll</button></div><div id="sceneList"></div></div>
+        <details class="compactDetails" id="otherContent"><summary>Tekst ose faqe</summary>
+        <div class="card"><label>Content type <select id="sceneKind"><option value="text">Text</option><option value="html">HTML</option><option value="page">Web page</option></select></label>
+          <div id="textInput"><label>Message <textarea id="sceneText" rows="5" placeholder="Text to project"></textarea></label><div class="inline"><label>Text color <input id="textColor" type="color" value="#ffffff"></label><label>Background <input id="textBackground" type="color" value="#10234a"></label><label>Size <input id="textSize" type="number" min="16" max="160" value="72"></label></div></div>
+          <div id="imageInput" hidden><label>Image <input id="imageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label></div>
+          <div id="htmlInput" hidden><label>HTML <textarea id="sceneHtml" rows="6" placeholder="<h1>Hello</h1>"></textarea></label></div>
+          <div id="pageInput" hidden><label>URL <input id="sceneUrl" type="url" placeholder="https://example.com"></label></div>
+          <div id="videoInput" hidden><label>Video <input id="videoFile" type="file" accept="video/mp4,video/webm"></label><label><input id="videoLoop" type="checkbox" checked> Loop</label></div>
+          <label>Scene name <input id="sceneName" maxlength="80" placeholder="Optional"></label><div class="toolbar"><button id="showScene" class="primary">Show</button><button id="saveScene">Save</button><button id="clearScreen">Clear screen</button></div>
+        </div></details>
+      </section>
+      <section id="fxTab" class="tab" hidden>
+        <div class="eyebrow">PROJECTION FX</div><h1>Sofa Spirit</h1>
+        <div class="mainActions fxTransport"><button id="fxPlay" class="primary">Luaj</button><button id="fxPause">Pauzë</button><button id="fxStop">Stop</button></div>
+        <div class="fxHeader"><span id="fxState" aria-live="polite">Gati</span><button id="fxCalibrate" class="quiet">Përshtat zonat</button></div>
+        <div id="fxWizard" class="card" hidden>
+          <p class="smallHint">Shiko divanin real. Zgjidh zonën dhe lëviz qoshet; + rregullon qendrën.</p>
+          <select id="fxPatch" aria-label="Zona e divanit"><option value="face">Fytyra · shpinorja</option><option value="left">Dora majtas</option><option value="right">Dora djathtas</option></select>
+          <canvas id="fxCalibration" width="1280" height="720" aria-label="Sofa calibration handles"></canvas>
+          <div id="fxHandleInfo" class="smallHint">Lëviz qoshet duke parë divanin.</div>
+          <input id="fxProfileName" maxlength="80" aria-label="Emri i pozicionit" value="Divani · Pozicioni A">
+          <div class="mainActions"><button id="fxSaveProfile">Ruaj pozicionin</button><button id="fxDone">U krye</button></div>
+          <details class="compactDetails"><summary>Rregullim i imët</summary><div class="toolbar"><button id="fxUndo">Kthe hapin</button><button id="fxReset">Rivendos zonën</button><button id="fxPreview">Provo figurën</button></div>
+            <div class="toolbar fxNudge"><button data-fx-nudge="-1,0" aria-label="Nudge left">←</button><button data-fx-nudge="0,-1" aria-label="Nudge up">↑</button><button data-fx-nudge="0,1" aria-label="Nudge down">↓</button><button data-fx-nudge="1,0" aria-label="Nudge right">→</button><label><input id="fxFine" type="checkbox" checked> Imët</label></div>
+            <label>Zbutja e skajit <input id="fxFeather" type="range" min="0" max="64" value="12"></label><label>Drita e zonës <input id="fxOpacity" type="range" min="0" max="100" value="100"></label><label>Rendi <select id="fxOrder"><option value="0">Mbrapa</option><option value="1">Në mes</option><option value="2">Përpara</option></select></label>
+            <label><input id="fxMaskMode" type="checkbox"> Maskë: prek 3–12 pika në rend orar</label><div class="toolbar"><button id="fxMaskApply">Vendos maskën</button><button id="fxMaskClear">Përdor konturin</button></div>
+          </details>
+          <details class="compactDetails"><summary>Pozicione të ruajtura</summary><div class="toolbar"><select id="fxProfiles" aria-label="Saved calibration profiles"></select><button id="fxLoadProfile">Hap</button><button id="fxNewProfile">Pozicion i ri</button></div></details>
+        </div>
+        <details class="compactDetails" id="fxOptions"><summary>Rregullime</summary><div class="inline fxSettings"><label>Intensiteti <input id="fxIntensity" type="range" min="0" max="100" value="70"></label><label>Shpejtësia <input id="fxSpeed" type="range" min="25" max="200" value="100"></label><label><input id="fxLoop" type="checkbox"> Përsërit</label></div><div class="toolbar"><button id="fxReplay">Rifillo</button><button id="fxExit">Kthehu te vizatimi</button></div><div class="toolbar"><input id="fxSceneName" maxlength="80" placeholder="Emri i skenës FX"><button id="fxSaveScene">Ruaj FX</button></div></details>
+        <p class="smallHint">Përshtat zonat vetëm kur lëviz projektorin ose divanin.</p>
+      </section>
+      <section id="moreTab" class="tab" hidden><h1>Më shumë</h1><div class="moreCards"><button data-open-tab="games">Lojërat <span>Tank Duel</span></button><button data-open-tab="settings">Pajisja <span>Zëri dhe lidhja</span></button></div></section>
+      <section id="gamesTab" class="tab" hidden>
+        <div class="eyebrow">HUGO RETRO ARCADE</div><h1>Tank Duel</h1>
+        <div id="gameSetup" class="card">
+          <p>Turn, drive and fire. First to the selected score wins. Player 1 hosts; a separately paired phone joins Player 2.</p>
+          <div class="inline"><label>Mode<select id="gameMode"><option value="1">Solo vs AI</option><option value="2">Two phones</option></select></label><label>Difficulty<select id="gameDifficulty"><option value="0">Easy</option><option value="1" selected>Normal</option><option value="2">Hard</option></select></label><label>Arena<select id="gameArena"><option value="0">Open Circuit</option><option value="1">Split Gate</option><option value="2">Crossroads</option></select></label><label>Score target<select id="gameTarget"><option>1</option><option selected>3</option><option>5</option><option>10</option></select></label></div>
+          <div class="inline"><label>Player 1<input id="gameName1" maxlength="16" value="PLAYER 1"></label><label>Player 2<input id="gameName2" maxlength="16" value="PLAYER 2"></label><label>Tank 1<select id="gameColor1"></select></label><label>Tank 2<select id="gameColor2"></select></label></div><label><input id="gameMute" type="checkbox"> Mute retro sounds</label><button id="gameStart" class="primary">Start new match</button>
+        </div>
+        <div class="toolbar"><button id="joinP1">Join Player 1</button><button id="joinP2">Join Player 2</button><button id="gameExpand">Expand controls</button><button id="gameSetupToggle">Setup</button></div>
+        <div id="gameStatus" aria-live="polite">No match</div>
+        <div id="gameControls"><div class="dpad"><button data-drive="forward" aria-label="Forward">▲</button><button data-drive="left" aria-label="Turn left">◀</button><button data-drive="back" aria-label="Reverse">▼</button><button data-drive="right" aria-label="Turn right">▶</button></div><button id="gameFire">FIRE</button></div>
+        <div class="toolbar"><button id="gamePause">Pause</button><button id="gameResume">Play / Resume</button><button id="gameRestart">Restart</button><button id="gameExit">Exit game</button></div>
+      </section>
+      <section id="settingsTab" class="tab" hidden>
+        <div class="eyebrow">DEVICE</div><h1>Settings</h1><div class="card"><div id="deviceStatus"></div><label>Volume <span id="volumeValue">—</span><input id="volume" type="range" min="0" max="100" value="50"></label><button id="setVolume" hidden>Set volume</button><button id="refreshStatus">Refresh status</button></div>
+        <div class="card"><h2>Connection</h2><p>LOCAL LAB · HTTP and WebSocket on private Wi‑Fi. Do not send sensitive data.</p><button id="forgetPairing">Forget pairing on this phone</button></div>
+      </section>
+      <div id="feedback" class="feedback" aria-live="polite"></div>
+    </section>
+  </main>
+</body>
+</html>
